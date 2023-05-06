@@ -6,15 +6,19 @@ import datetime
 import hashlib
 
 
-def sync(src_path, dest):
+def sync(src_path, dest, log_file):
     # TODO catch path does not exist error
     # check source is proper or not ---yet to do
+
     src_path_2 = src_path
+    src_path_len = len(src_path)
+    dest_path_len = len(dest)
     if not os.path.exists(dest):
         os.makedirs(dest)
         print(f"Directory '{dest}' created")
         # check for files or folders in source
         shutil.copytree(src_path, dest)
+
         # for file in os.listdir(source):
         #     source_file_path = os.path.join(source, file)
         #     replica_file_path = os.path.join(replica, file)
@@ -62,16 +66,19 @@ def sync(src_path, dest):
                     os.makedirs(dest_dir_path)
 
         # deletefiles at replica but not at source
-        for file in os.listdir(dest):
-            if not os.path.exists(os.path.join(src_path_2, file)):
-                replica_file_path = os.path.join(dest, file)
-                print("replica_file_path", replica_file_path)
-                if os.path.isdir(replica_file_path):
-                    shutil.rmtree(replica_file_path)
-                    print("folder removed from replica")
-                else:
-                    os.remove(replica_file_path)
-                    print("file removed from replica")
+        for root, dirs, files in os.walk(dest):
+            for file in files:
+                dest_path = os.path.join(root, file)
+                src_path_append = root[len(dest):]
+                src = os.path.join(src_path_2+src_path_append, file)
+                if not os.path.exists(src):
+                    os.remove(dest_path)
+            for dir in dirs:
+                dest_dir_path = os.path.join(root, dir)
+                src_path_append = root[dest_path_len:]
+                src_dir_path = os.path.join(src_path_2+src_path_append, dir)
+                if not os.path.exists(src_dir_path):
+                    shutil.rmtree(dest_dir_path)
         # Compare files in both add if not present at replica, if present check for the modifications at source and update at replica
 
 
@@ -93,5 +100,5 @@ if __name__ == "__main__":
 
     while True:
 
-        sync(source, dest)
+        sync(source, dest, log_file)
         time.sleep(60)
