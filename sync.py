@@ -1,11 +1,10 @@
 import argparse
-import os
-import time
-import shutil
-import datetime
 import hashlib
 import logging
 import logging.handlers
+import os
+import shutil
+import time
 
 
 def sync(src_path, dest):
@@ -50,7 +49,7 @@ def sync(src_path, dest):
             # create directories in replica which does not exist
             for dir in dirs:
                 dest_append = root[src_path_len:]
-                dest_dir_path = os.path.join(dest+dest_append, dir)
+                dest_dir_path = os.path.join(dest + dest_append, dir)
                 if not os.path.exists(dest_dir_path):
                     os.makedirs(dest_dir_path)
                     logging.info(
@@ -61,7 +60,7 @@ def sync(src_path, dest):
             for file in files:
                 dest_path = os.path.join(root, file)
                 src_path_append = root[len(dest):]
-                src = os.path.join(src_path_original+src_path_append, file)
+                src = os.path.join(src_path_original + src_path_append, file)
                 if not os.path.exists(src):
                     os.remove(dest_path)
                     logging.info(
@@ -88,20 +87,18 @@ def main(source, dest, interval, log_file):
 
         file_handler = logging.handlers.RotatingFileHandler(
             log_file, mode='a', maxBytes=128)
+        console_handler = logging.StreamHandler()
 
         log_formatter = logging.Formatter(
             '%(levelname)s:%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
         file_handler.setFormatter(log_formatter)
-
-        console_handler = logging.StreamHandler()
         console_handler.setFormatter(log_formatter)
 
         app_log.addHandler(file_handler)
         app_log.addHandler(console_handler)
 
         while True:
-
             sync(source, dest)
             time.sleep(interval*60)
 
