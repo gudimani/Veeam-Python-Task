@@ -77,25 +77,11 @@ def sync(src_path, dest):
                         'Directory %s removed from replica', dir)
 
 
-if __name__ == "__main__":
+def main(source, dest, interval, log_file):
     try:
-        parser = argparse.ArgumentParser(
-            description='Synchronize source and replica at regular intervals')
-        parser.add_argument('--source',  type=str, help='Source folder path')
-        parser.add_argument('--replica', type=str, help='Replica folder path')
-        parser.add_argument('--interval', type=float,
-                            default=1, help='Log interval in minutes')
-        parser.add_argument('--log_file',  type=str,
-                            default='sync.log', help='Log file name')
-
-        args = parser.parse_args()
-        source = args.source
         if not os.path.exists(source):
             raise FileNotFoundError(
                 'Source path does not exist. Please enter valid source path.')
-        dest = args.replica
-        interval = args.interval
-        log_file = args.log_file
 
         app_log = logging.getLogger()
         app_log.setLevel(logging.INFO)
@@ -124,3 +110,22 @@ if __name__ == "__main__":
     except ValueError as error:
         if str(error) == 'sleep length must be non-negative':
             print('Please provide positive interval value')
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Synchronize source and replica at regular intervals')
+    parser.add_argument('--source',  type=str, help='Source folder path')
+    parser.add_argument('--replica', type=str, help='Replica folder path')
+    parser.add_argument('--interval', type=float,
+                        default=1, help='Log interval in minutes')
+    parser.add_argument('--log_file',  type=str,
+                        default='sync.log', help='Log file name')
+
+    args = parser.parse_args()
+    source = args.source
+    dest = args.replica
+    interval = args.interval
+    log_file = args.log_file
+
+    main(source, dest, interval, log_file)
