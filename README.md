@@ -31,3 +31,10 @@ Programming language: Python
 
 **Note:** Do not provide a path to replica which contains important files. For example: `--replica C:\Program Files (x86).`
 As the files in replica will be deleted if they are not present in source.
+
+## How to run the automated tests
+
+1. Install pytest
+
+### Command
+`pytest`
